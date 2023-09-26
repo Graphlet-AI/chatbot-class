@@ -1,0 +1,45 @@
+[tool.poetry]
+name = "chatbot-class"
+version = "0.1.0"
+description = "Course covering generative AI, large language models (LLMs), vector search, retrieval aided generation (RAG), LLM fine-tuning."
+authors = ["Russell Jurney <rjurney@graphlet.ai>"]
+license = "MIT"
+readme = "README.md"
+packages = [{include = "chatbot_class"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+openai = "^0.28.0"
+chromadb = "^0.4.13"
+langchain = "^0.0.301"
+pypdf = "^3.16.2"
+aws-cdk-lib = "^2.97.0"
+
+[tool.poetry.group.dev.dependencies]
+black = "^23.9.1"
+flake8 = "^6.1.0"
+isort = "^5.12.0"
+mypy = "^1.5.1"
+pre-commit = "^3.4.0"
+ipython = "^8.15.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 100
+target-version = ["py310"]
+include = ["chatbot_class", "test"]
+
+[tool.isort]
+profile = "black"
+src_paths = ["chatbot_class", "test"]
+
+[tool.mypy]
+python_version = "3.10"
+mypy_path = ["chatbot_class", "test"]
+warn_return_any = true
+warn_unused_configs = true
+warn_redundant_casts = true
+warn_unused_ignores = true
