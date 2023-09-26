@@ -3,9 +3,10 @@ import os
 
 from langchain.chains import ConversationalRetrievalChain
 from langchain.document_loaders import PyPDFDirectoryLoader
-from langchain.embeddings import OpenAIEmbeddings
+from langchain.embeddings import CacheBackedEmbeddings, OpenAIEmbeddings
 from langchain.llms import OpenAI
 from langchain.memory import ConversationBufferMemory
+from langchain.storage import LocalFileStore
 from langchain.vectorstores import Chroma
 
 logging.getLogger("langchain").setLevel(logging.DEBUG)
@@ -32,8 +33,15 @@ print(
 )
 
 # Embed them with OpenAI ada model and store them in ChromaDB
-embeddings = OpenAIEmbeddings()
-vectordb = Chroma.from_documents(docs, embedding=embeddings, persist_directory="data")
+embeddings = OpenAIEmbeddings(
+    model="ada",
+    max_retries=1,
+    chunk_size=100,
+)
+fs = LocalFileStore("./data/embedding_cache/")
+cached_embedder = CacheBackedEmbeddings.from_bytes_store(embeddings, fs, namespace=embeddings.model)
+
+vectordb = Chroma.from_documents(docs, embedding=cached_embedder, persist_directory="data")
 vectordb.persist()
 
 # Setup a simple buffer memory system to submit with the API calls to provide prompt context
@@ -48,3 +56,4 @@ qa = ConversationalRetrievalChain.from_llm(
 )
 
 result = qa({"question": "What are the different types of network motif?"})
+print(result)
