@@ -16,6 +16,7 @@ pypdf = "^3.16.2"
 aws-cdk-lib = "^2.97.0"
 tiktoken = "^0.5.1"
 wandb = "^0.15.11"
+llama-index = "^0.8.33"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.9.1"
