@@ -7,6 +7,13 @@ license = "MIT"
 readme = "README.md"
 packages = [{include = "chatbot_class"}]
 
+[project.urls]
+"Company Homepage" = "https://graphlet.ai"
+"Class Homepage" = "https://technologytransfer.it/events-mec/chatbots-bootcamp/"
+"Teacher Homepage" = "https://linkedin.com/in/russelljurney"
+"Code Repository" = "https://github.com/Graphlet-AI/chatbot-class"
+"Bug Tracker" = "https://github.com/Graphlet-AI/chatbot-class/issues"
+
 [tool.poetry.dependencies]
 python = "^3.10"
 openai = "^0.28.0"
