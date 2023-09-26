@@ -43,9 +43,10 @@ In addition to
 
 There are several docker containers used in this course:
 
-- `jupyter`: the Jupyter Notebook server where we will interactively write and run code.
-- ``
-- `neo4j`: the Neo4j graph database server where we will store and query graph data.
+- `jupyter`: Jupyter Notebook server where we will interactively write and run code.
+- `chroma`: Chroma vector database server where we will store and query vector embeddings of documents for RAG.
+- `neo4j`: Neo4j graph database server where we will store and query graph data for prompt engineering and fine-tuning LLMs.
+- `opensearch`: OpenSearch server where we will store and query documents for RAG.
 
 ### Docker Compose
 
@@ -78,7 +79,7 @@ We use a Docker image to run the course, but you can also setup the environment 
 We use Anaconda Python, Python version 3.10.0, for this course. You can download Anaconda Python from [here](https://www.anaconda.com/products/individual). Once you have installed Anaconda Python, you can create a new environment for this course by running the following command:
 
 ```bash
-conda create -n chatbot-class python=3.10
+conda create -n chatbot-class python=3.10 -y
 ```
 
 When you create a new environment or start a new shell, you will need to activate the `chatbot-class` conda environment with the following command:
@@ -86,6 +87,8 @@ When you create a new environment or start a new shell, you will need to activat
 ```bash
 conda activate chatbot-class
 ```
+
+Now you are running Python 3.10 in the `chatbot-class` environment. To use this Python in VSCode, hit SHIFT-CMD-P (on Mac) and select `Python: Select Interpreter`. Then select the `chatbot-class` environment's Python.
 
 #### Other Virtual Environments
 
