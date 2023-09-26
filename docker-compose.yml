@@ -1,5 +1,9 @@
 version: "3.8"
 
+networks:
+  net:
+    driver: bridge
+
 services:
   jupyter:
     # image: jupyter/scipy-notebook:python-3.10.11
@@ -10,6 +14,8 @@ services:
     container_name: jupyter
     ports:
       - 8888:8888
+    networks:
+      - net
     volumes:
       - .:/home/jovyan/work
       - ./data:/home/jovyan/data
@@ -21,12 +27,25 @@ services:
       - envs/openai.env
       - .env
     restart: always
+
+  chroma:
+    image: chromadb/chroma:0.4.13
+    container_name: chroma
+    ports:
+      - 8000:8000
+    networks:
+      - net
+    volumes:
+      - ./data/chroma:/chroma/chroma
+
   neo4j:
     image: neo4j:5.11.0
     container_name: neo4j
     ports:
       - 7474:7474
       - 7687:7687
+    networks:
+      - net
     volumes:
       - ./data/neo4j:/data
       - ./logs/neo4j:/logs
