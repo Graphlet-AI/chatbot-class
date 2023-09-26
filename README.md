@@ -90,9 +90,33 @@ conda activate chatbot-class
 
 Now you are running Python 3.10 in the `chatbot-class` environment. To use this Python in VSCode, hit SHIFT-CMD-P (on Mac) and select `Python: Select Interpreter`. Then select the `chatbot-class` environment's Python.
 
+To deactivate this environment, run:
+
+```bash
+conda deactivate
+```
+
 #### Other Virtual Environments
 
 Note: I don't support other environments, but you can actually use any Python 3.10 if you are smart enough to make that work. :) You will need to manage your own virtual environments. Python 3's [`venv`](https://docs.python.org/3/library/venv.html) are easy to use.
+
+To create a `venv` for the project, run:
+
+```bash
+python3 -m venv chatbot-class
+```
+
+To activate this venv run:
+
+```bash
+source chatbot-class/bin/activate
+```
+
+To deactivate this environment, run:
+
+```bash
+deactivate
+```
 
 ### Install Poetry for Dependency Management
 
