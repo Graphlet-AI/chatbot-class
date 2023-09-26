@@ -20,8 +20,16 @@ if not openai_api_key:
     raise ValueError("OPENAI_API_KEY environment variable not set")
 
 # Load all PDFs from academic paper folder
-loader = PyPDFDirectoryLoader(PAPER_FOLDER)
+loader = PyPDFDirectoryLoader(PAPER_FOLDER, silent_errors=True)
 docs = loader.load()
+
+# How many papers on network motifs?
+motif_docs = [(x.metadata["source"], x.page_content) for x in docs if "motif" in x.page_content]
+motif_doc_count = len(motif_docs)
+paper_count = len(set(x[0] for x in motif_docs))
+print(
+    f"You have {paper_count} papers on network motifs split across {motif_doc_count} document segments in `{PAPER_FOLDER}`."
+)
 
 # Embed them with OpenAI ada model and store them in ChromaDB
 embeddings = OpenAIEmbeddings()
