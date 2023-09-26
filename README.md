@@ -31,11 +31,11 @@ This course covers generative AI, large language models (LLMs), vector search, r
 - [Course Slides](https://bit.ly/graphlet_chatbot_slides)
 - [Course Code Repository](https://github.com/Graphlet-AI/chatbot-class) (this repository)
 
-## Docker Setup
+## Code Environment Setup
 
 I provide a Docker image for this course that uses [Jupyter Notebooks](https://jupyter.org/). Docker allows you to run the class's code in an environment precisely matching the one in which the code was developed and tested. You can also use the Docker image to run the course code in VSCode or another editor (see below).
 
-In addition to 
+In addition to Docker you can also setup an environment locally using the instructions below.
 
 ### Install Docker
 
@@ -141,3 +141,36 @@ pip install poetry
 ```bash
 poetry install
 ```
+
+## Essential Tools
+
+### [`langchain`](https://www.langchain.com/) ([docs](https://python.langchain.com/docs/get_started/introduction))
+
+> LangChain is a framework for developing applications powered by language models. It enables applications that:
+>
+> * Are context-aware: connect a language model to sources of context (prompt instructions, few shot examples, content to ground its response in, etc.)
+> * Reason: rely on a language model to reason (about how to answer based on provided context, what actions to take, etc.)
+>
+> The main value props of LangChain are:
+>
+> * Components: abstractions for working with language models, along with a collection of implementations for each abstraction. Components are modular and easy-to-use, whether you are using the rest of the LangChain framework or not
+> * Off-the-shelf chains: a structured assembly of components for accomplishing specific higher-level tasks
+Off-the-shelf chains make it easy to get started. For complex applications, components make it easy to customize existing chains and build new ones.
+
+### [`langchain-hub`](https://github.com/hwchase17/langchain-hub)
+
+> Taking inspiration from Hugging Face Hub, LangChainHub is collection of all artifacts useful for working with LangChain primitives such as prompts, chains and agents. The goal of this repository is to be a central resource for sharing and discovering high quality prompts, chains and agents that combine together to form complex LLM applications.
+
+See [example usage here](https://python.langchain.com/docs/use_cases/question_answering/).
+
+### [`llama-index`](https://github.com/jerryjliu/llama_index)
+
+> LlamaIndex is a "data framework" to help you build LLM apps. It provides the following tools:
+>
+> * Offers data connectors to ingest your existing data sources and data formats (APIs, PDFs, docs, SQL, etc.)
+> * Provides ways to structure your data (indices, graphs) so that this data can be easily used with LLMs.
+> * Provides an advanced retrieval/query interface over your data: Feed in any LLM input prompt, get back retrieved context and knowledge-augmented output.
+> * Allows easy integrations with your outer application framework (e.g. with LangChain, Flask, Docker, ChatGPT, anything else).
+>
+> LlamaIndex provides tools for both beginner users and advanced users. Our high-level API allows beginner users to use LlamaIndex to ingest and query their data in 5 lines of code. Our lower-level APIs allow advanced users to customize and extend any module (data connectors, indices, retrievers, query engines, reranking modules), to fit their needs.
+
