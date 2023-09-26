@@ -2,6 +2,8 @@
 
 This course covers generative AI, large language models (LLMs), vector search, retrieval aided generation (RAG), LLM fine-tuning, and more. The course is designed for software engineers, data scientists, and machine learning engineers who want to learn how to build AI-powered chatbots.
 
+<center><img src="images/Graphlet-AI-Banner-with-Hypergraph-and-Womans-Head.jpg" /></center>
+
 ## Course Essentials
 
 ### Skill Prerequisites
