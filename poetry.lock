@@ -1410,6 +1410,21 @@ typing-inspect = ">=0.8.0"
 urllib3 = "<2"
 
 [[package]]
+name = "marko"
+version = "2.0.0"
+description = "A markdown parser with high extensibility."
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "marko-2.0.0-py3-none-any.whl", hash = "sha256:d5a8221e0d4a9369e662c33ccfe33dea7deb2bebcf1ac3d5a4b46d42ab309e8f"},
+    {file = "marko-2.0.0.tar.gz", hash = "sha256:efc26460893250c13751025ae9202ebb1389887036fc0df9009c6ab875467030"},
+]
+
+[package.extras]
+codehilite = ["pygments"]
+toc = ["python-slugify"]
+
+[[package]]
 name = "marshmallow"
 version = "3.20.1"
 description = "A lightweight library for converting complex datatypes to and from native Python datatypes."
@@ -3657,4 +3672,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "87b808a4b5747e5e7df1165ab2a682ea6baad300c9978ea835bdc5877cac9e29"
+content-hash = "c638ba5934de1e96876afeea8ff78fa7213a6c0cd60ea8580d035472ea9d49c3"
