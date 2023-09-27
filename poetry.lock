@@ -1337,6 +1337,21 @@ qdrant = ["qdrant-client (>=1.3.1,<2.0.0)"]
 text-helpers = ["chardet (>=5.1.0,<6.0.0)"]
 
 [[package]]
+name = "langchain-decorators"
+version = "0.2.2"
+description = "syntactic sugar for langchain"
+optional = false
+python-versions = ">=3.9"
+files = [
+    {file = "langchain-decorators-0.2.2.tar.gz", hash = "sha256:c9fab32852961ebc47d6442ebb5dbdc82bba45151ab238451edd75f25e3cc7a8"},
+    {file = "langchain_decorators-0.2.2-py3-none-any.whl", hash = "sha256:69ebf6983b1e8e399afc9acc35a3bde114f3339783c9426125bc1830d8beac7b"},
+]
+
+[package.dependencies]
+langchain = "*"
+promptwatch = "*"
+
+[[package]]
 name = "langchainhub"
 version = "0.1.13"
 description = ""
@@ -2072,6 +2087,23 @@ files = [
 
 [package.dependencies]
 wcwidth = "*"
+
+[[package]]
+name = "promptwatch"
+version = "0.3.0"
+description = "promptwatch.io python client to trace langchain sessions"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "promptwatch-0.3.0-py3-none-any.whl", hash = "sha256:0cef59bbc936b76ed9f708517de9b12db36b7f0c394048736b4dc7e4a52458fc"},
+    {file = "promptwatch-0.3.0.tar.gz", hash = "sha256:4136596e16d138e633cffe11020b910da5ccfe62d692a7235bf31610abbef87d"},
+]
+
+[package.dependencies]
+langchain = "*"
+pydantic = "*"
+tiktoken = "*"
+tqdm = "*"
 
 [[package]]
 name = "protobuf"
@@ -3625,4 +3657,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "3f6829ef8216e652e152b90ac5d0e929c767c24b5d04ba10f262005d5d3ddbec"
+content-hash = "87b808a4b5747e5e7df1165ab2a682ea6baad300c9978ea835bdc5877cac9e29"
