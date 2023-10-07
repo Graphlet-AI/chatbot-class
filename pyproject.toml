@@ -27,7 +27,7 @@ llama-index = "^0.8.33"
 langchainhub = "^0.1.13"
 langchain-decorators = "^0.2.2"
 marko = "^2.0.0"
-pytorch = "1.0.1"
+torch = "^2.1.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.9.1"
