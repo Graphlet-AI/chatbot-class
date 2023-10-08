@@ -1,59 +1,111 @@
 version: "3.8"
 
-networks:
-  net:
-    driver: bridge
-
 services:
-  jupyter:
-    # image: jupyter/scipy-notebook:python-3.10.11
-    image: rjurney/chatbot-class
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: jupyter
-    ports:
-      - 8888:8888
-    networks:
-      - net
-    volumes:
-      - .:/home/jovyan/work
-      - ./data:/home/jovyan/data
+  # jupyter:
+  #   # image: jupyter/scipy-notebook:python-3.10.11
+  #   image: rjurney/chatbot-class
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   container_name: jupyter
+  #   ports:
+  #     - 8888:8888
+  #   networks:
+  #     - chatbot-net
+  #   volumes:
+  #     - .:/home/jovyan/work
+  #     - ./data:/home/jovyan/data
+  #   environment:
+  #     - JUPYTER_ENABLE_LAB=yes
+  #   env_file:
+  #     - envs/graphistry.env
+  #     - envs/search.env
+  #     - envs/openai.env
+  #     - envs/wandb.env
+  #     - .env
+  #   restart: always
+
+  # neo4j:
+  #   image: neo4j:5.11.0
+  #   container_name: neo4j
+  #   ports:
+  #     - 7474:7474
+  #     - 7687:7687
+  #   networks:
+  #     - chatbot-net
+  #   volumes:
+  #     - ./data/neo4j:/data
+  #     - ./logs/neo4j:/logs
+  #   environment:
+  #     - NEO4J_ACCEPT_LICENSE_AGREEMENT=yes
+  #   env_file:
+  #     - envs/neo4j.env
+  #     - .env
+  #   restart: always
+
+  opensearch-node1: # This is also the hostname of the container within the Docker network (i.e. https://opensearch-node1/)
+    image: opensearchproject/opensearch:latest # Specifying the latest available image - modify if you want a specific version
+    container_name: opensearch-node1
     environment:
-      - JUPYTER_ENABLE_LAB=yes
-    env_file:
-      - envs/graphistry.env
-      - envs/search.env
-      - envs/openai.env
-      - envs/wandb.env
-      - .env
-    restart: always
-
-  chroma:
-    image: chromadb/chroma:0.4.13
-    container_name: chroma
-    ports:
-      - 8000:8000
-    networks:
-      - net
+      - cluster.name=opensearch-cluster # Name the cluster
+      - node.name=opensearch-node1 # Name the node that will run in this container
+      - discovery.seed_hosts=opensearch-node1,opensearch-node2 # Nodes to look for when discovering the cluster
+      - cluster.initial_cluster_manager_nodes=opensearch-node1,opensearch-node2 # Nodes eligible to serve as cluster manager
+      - bootstrap.memory_lock=true # Disable JVM heap memory swapping
+      - "OPENSEARCH_JAVA_OPTS=-Xms32g -Xmx32g" # Set min and max JVM heap sizes to at least 50% of system RAM
+    ulimits:
+      memlock:
+        soft: -1 # Set memlock to unlimited (no soft or hard limit)
+        hard: -1
+      nofile:
+        soft: 65536 # Maximum number of open files for the opensearch user - set to at least 65536
+        hard: 65536
     volumes:
-      - ./data/chroma:/chroma/chroma
-
-  neo4j:
-    image: neo4j:5.11.0
-    container_name: neo4j
+      - opensearch-data1:/usr/share/opensearch/data # Creates volume called opensearch-data1 and mounts it to the container
     ports:
-      - 7474:7474
-      - 7687:7687
+      - 9200:9200 # REST API
+      - 9600:9600 # Performance Analyzer
     networks:
-      - net
-    volumes:
-      - ./data/neo4j:/data
-      - ./logs/neo4j:/logs
+      - chatbot-net # All of the containers will join the same Docker bridge network
+
+  opensearch-node2:
+    image: opensearchproject/opensearch:latest # This should be the same image used for opensearch-node1 to avoid issues
+    container_name: opensearch-node2
     environment:
-      - NEO4J_ACCEPT_LICENSE_AGREEMENT=yes
-    env_file:
-      - envs/neo4j.env
-      - .env
-    restart: always
+      - cluster.name=opensearch-cluster
+      - node.name=opensearch-node2
+      - discovery.seed_hosts=opensearch-node1,opensearch-node2
+      - cluster.initial_cluster_manager_nodes=opensearch-node1,opensearch-node2
+      - bootstrap.memory_lock=true
+      - "OPENSEARCH_JAVA_OPTS=-Xms32g -Xmx32g"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    volumes:
+      - opensearch-data2:/usr/share/opensearch/data
+    networks:
+      - chatbot-net
 
+  opensearch-dashboards:
+    image: opensearchproject/opensearch-dashboards:latest # Make sure the version of opensearch-dashboards matches the version of opensearch installed on other nodes
+    container_name: opensearch-dashboards
+    ports:
+      - 5601:5601 # Map host port 5601 to container port 5601
+    expose:
+      - "5601" # Expose port 5601 for web access to OpenSearch Dashboards
+    environment:
+      OPENSEARCH_HOSTS: '["https://opensearch-node1:9200","https://opensearch-node2:9200"]' # Define the OpenSearch nodes that OpenSearch Dashboards will query
+    networks:
+      - chatbot-net
+
+volumes:
+  opensearch-data1:
+  opensearch-data2:
+
+networks:
+  chatbot-net:
+    driver: bridge
