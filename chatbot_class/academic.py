@@ -11,7 +11,7 @@ from langchain.llms import OpenAI
 from langchain.memory import ConversationBufferMemory
 from langchain.schema.embeddings import Embeddings
 from langchain.storage import LocalFileStore
-from langchain.vectorstores import Chroma
+from langchain.vectorstores import OpenSearchVectorSearch, VectorStore
 
 logging.getLogger("langchain").setLevel(logging.DEBUG)
 
@@ -29,15 +29,15 @@ loader = PyPDFDirectoryLoader(PAPER_FOLDER, silent_errors=True)
 docs = loader.load()
 
 # How many papers on network motifs?
-motif_docs = [(x.metadata["source"], x.page_content) for x in docs if "motif" in x.page_content]
+motif_docs = [doc for doc in docs if "motif" in doc.page_content]
 motif_doc_count = len(motif_docs)
-paper_count = len(set(x[0] for x in motif_docs))
+paper_count = len(set(doc.metadata["source"] for doc in motif_docs))
 print(
     f"You have {paper_count} papers on network motifs split across {motif_doc_count} document segments in `{PAPER_FOLDER}`."
 )
 
 # Embed them with OpenAI ada model and store them in ChromaDB
-embeddings = OpenAIEmbeddings()# openai_api_key=os.environ["OPENAI_API_KEY"])
+embeddings = OpenAIEmbeddings()  # openai_api_key=os.environ["OPENAI_API_KEY"])
 fs = LocalFileStore("./data/embedding_cache/")
 cached_embedder = CacheBackedEmbeddings.from_bytes_store(embeddings, fs, namespace=embeddings.model)
 
@@ -89,8 +89,9 @@ class RobustChroma(Chroma):
 
         last_file = None
         texts, metadatas = [], []
-        for doc in documents:
+        for i, doc in enumerate(documents):
             filename = doc.metadata["source"]
+            print(f"Adding {i}th document - {filename}")
             try:
                 if filename != last_file:
                     if last_file:
@@ -99,9 +100,11 @@ class RobustChroma(Chroma):
                     last_file = filename
 
                 # Build up a cache of documents to add...
-                texts.append(doc.page_content)
-                metadatas.append(doc.metadata)
-                chroma_collection.add_texts(texts=texts, metadatas=metadatas, ids=ids)
+                if RobustChroma.is_encodable(doc.page_content):
+                    texts.append(doc.page_content)
+                    metadatas.append(doc.metadata)
+
+            # We should not be called...
             except UnicodeDecodeError:
                 logging.warning(
                     f'Skipping document due to UnicodeDecodeError: {doc.metadata["source"]}'
@@ -111,24 +114,18 @@ class RobustChroma(Chroma):
         return chroma_collection
 
     @staticmethod
-    def partition(lst, batch_size):
-        """Partition a list into batches of a specified size.
-
-        Args:
-            lst (list): The list to partition.
-            batch_size (int): The size of each batch.
-
-        Returns:
-            list: A list of lists, where each inner list is a batch.
-        """
-        # For input list of length 0-1, return the list itself within another list
-        if len(lst) <= 1:
-            return [lst]
-        # For other cases, create the batches
-        return [lst[i : i + batch_size] for i in range(0, len(lst), batch_size)]
+    def is_encodable(s):
+        try:
+            s.encode("utf-8")
+        except UnicodeEncodeError:
+            logging.warning(f"Skipping document due to UnicodeDecodeError: {s}")
+            return False
+        return True
 
 
-vectordb = RobustChroma.from_documents(docs, embedding=cached_embedder, persist_directory="data")
+vectordb = RobustChroma.from_documents(
+    motif_docs, embedding=cached_embedder, persist_directory="data"
+)
 vectordb.persist()
 
 # Setup a simple buffer memory system to submit with the API calls to provide prompt context
