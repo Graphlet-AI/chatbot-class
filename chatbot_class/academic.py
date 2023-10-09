@@ -1,17 +1,13 @@
 import logging
 import os
-from typing import Any, Dict, List, Optional, Type
 
-import chromadb
 from langchain.chains import ConversationalRetrievalChain
-from langchain.docstore.document import Document
 from langchain.document_loaders import PyPDFDirectoryLoader
 from langchain.embeddings import CacheBackedEmbeddings, OpenAIEmbeddings
 from langchain.llms import OpenAI
 from langchain.memory import ConversationBufferMemory
-from langchain.schema.embeddings import Embeddings
 from langchain.storage import LocalFileStore
-from langchain.vectorstores import OpenSearchVectorSearch, VectorStore
+from langchain.vectorstores import OpenSearchVectorSearch
 
 logging.getLogger("langchain").setLevel(logging.DEBUG)
 
@@ -36,97 +32,18 @@ print(
     f"You have {paper_count} papers on network motifs split across {motif_doc_count} document segments in `{PAPER_FOLDER}`."
 )
 
-# Embed them with OpenAI ada model and store them in ChromaDB
-embeddings = OpenAIEmbeddings()  # openai_api_key=os.environ["OPENAI_API_KEY"])
+# Embed them with OpenAI ada model and store them in OpenSearch
+embeddings = OpenAIEmbeddings()
 fs = LocalFileStore("./data/embedding_cache/")
 cached_embedder = CacheBackedEmbeddings.from_bytes_store(embeddings, fs, namespace=embeddings.model)
 
-
-class RobustChroma(Chroma):
-    """Handle UnicodeDecodeErrors and don't die, just skip them."""
-
-    @classmethod
-    def from_documents(
-        cls: Type[Chroma],
-        documents: List[Document],
-        embedding: Optional[Embeddings] = None,
-        ids: Optional[List[str]] = None,
-        collection_name: str = "langchain",
-        persist_directory: Optional[str] = None,
-        client_settings: Optional[chromadb.config.Settings] = None,
-        client: Optional[chromadb.Client] = None,  # Add this line
-        collection_metadata: Optional[Dict] = None,
-        **kwargs: Any,
-    ) -> Chroma:
-        """Create a Chroma vectorstore from a list of documents.
-
-        If a persist_directory is specified, the collection will be persisted there.
-        Otherwise, the data will be ephemeral in-memory.
-
-        Args:
-            collection_name (str): Name of the collection to create.
-            persist_directory (Optional[str]): Directory to persist the collection.
-            ids (Optional[List[str]]): List of document IDs. Defaults to None.
-            documents (List[Document]): List of documents to add to the vectorstore.
-            embedding (Optional[Embeddings]): Embedding function. Defaults to None.
-            client_settings (Optional[chromadb.config.Settings]): Chroma client settings
-            collection_metadata (Optional[Dict]): Collection configurations.
-                                                  Defaults to None.
-
-        Returns:
-            Chroma: Chroma vectorstore.
-        """
-
-        chroma_collection = cls(
-            collection_name=collection_name,
-            embedding_function=embedding,
-            persist_directory=persist_directory,
-            client_settings=client_settings,
-            client=client,
-            collection_metadata=collection_metadata,
-            **kwargs,
-        )
-
-        last_file = None
-        texts, metadatas = [], []
-        for i, doc in enumerate(documents):
-            filename = doc.metadata["source"]
-            print(f"Adding {i}th document - {filename}")
-            try:
-                if filename != last_file:
-                    if last_file:
-                        chroma_collection.add_texts(texts=texts, metadatas=metadatas, ids=ids)
-                    texts, metadatas = [], []
-                    last_file = filename
-
-                # Build up a cache of documents to add...
-                if RobustChroma.is_encodable(doc.page_content):
-                    texts.append(doc.page_content)
-                    metadatas.append(doc.metadata)
-
-            # We should not be called...
-            except UnicodeDecodeError:
-                logging.warning(
-                    f'Skipping document due to UnicodeDecodeError: {doc.metadata["source"]}'
-                )
-                continue  # Skip to the next document
-
-        return chroma_collection
-
-    @staticmethod
-    def is_encodable(s):
-        try:
-            s.encode("utf-8")
-        except UnicodeEncodeError:
-            logging.warning(f"Skipping document due to UnicodeDecodeError: {s}")
-            return False
-        return True
-
-
-vectordb = RobustChroma.from_documents(
-    motif_docs, embedding=cached_embedder, persist_directory="data"
+# Setup a OpenSearch to store the embeddings
+opensearch = OpenSearchVectorSearch(
+    index_name="academic_papers",
+    embedding_function=cached_embedder,
+    opensearch_url="http://localhost:9200",
 )
-vectordb.persist()
+opensearch.add_documents(motif_docs, bulk_size=1024, verbose=True)
 
 # Setup a simple buffer memory system to submit with the API calls to provide prompt context
 memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
@@ -134,7 +51,7 @@ memory = ConversationBufferMemory(memory_key="chat_history", return_messages=Tru
 # Create a ConversationalRetrievalChain from the LLM, the vectorstore, and the memory system
 qa = ConversationalRetrievalChain.from_llm(
     OpenAI(temperature=0.8),
-    vectordb.as_retriever(),
+    opensearch.as_retriever(),
     memory=memory,
     verbose=True,
 )
