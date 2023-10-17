@@ -41,7 +41,7 @@ cached_embedder = CacheBackedEmbeddings.from_bytes_store(embeddings, fs, namespa
 opensearch = OpenSearchVectorSearch(
     index_name="academic_papers",
     embedding_function=cached_embedder,
-    opensearch_url="http://localhost:9200",
+    opensearch_url="http://admin:admin@localhost:9200",
 )
 opensearch.add_documents(motif_docs, bulk_size=1024, verbose=True)
 
