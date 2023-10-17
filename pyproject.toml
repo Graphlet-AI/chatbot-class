@@ -7,7 +7,7 @@ license = "MIT"
 readme = "README.md"
 packages = [{include = "chatbot_class"}]
 
-[project.urls]
+[tool.poetry.urls]
 "Company Homepage" = "https://graphlet.ai"
 "Class Homepage" = "https://technologytransfer.it/events-mec/chatbots-bootcamp/"
 "Teacher Homepage" = "https://linkedin.com/in/russelljurney"
