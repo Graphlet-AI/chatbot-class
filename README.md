@@ -4,6 +4,10 @@ This course covers generative AI, large language models (LLMs), vector search, r
 
 <center><img src="images/Graphlet-AI-Banner-with-Hypergraph-and-Womans-Head.jpg" /></center>
 
+## Shout Outs to Ivan Reznikov
+
+This course owes great debt to the [LangChain 101 course](https://medium.com/@ivanreznikov/langchain-101-course-updated-668f7b41d6cb) by [Ivan Reznikov](https://www.linkedin.com/in/reznikovivan/). I started with it and other content I created and combined them into a single course covering the topics below.
+
 ## Course Essentials
 
 ### Skill Prerequisites
@@ -44,7 +48,6 @@ In addition to Docker you can also setup an environment locally using the instru
 There are several docker containers used in this course:
 
 - `jupyter`: Jupyter Notebook server where we will interactively write and run code.
-- `chroma`: Chroma vector database server where we will store and query vector embeddings of documents for RAG.
 - `neo4j`: Neo4j graph database server where we will store and query graph data for prompt engineering and fine-tuning LLMs.
 - `opensearch`: OpenSearch server where we will store and query documents for RAG.
 
