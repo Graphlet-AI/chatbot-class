@@ -148,3 +148,7 @@ def main():
     print(qa({"question": "What are the different types of network motif?"})["answer"])
 
     print(qa({"question": "What is an example of a biological network motif?"})["answer"])
+
+
+if __name__ == "__main__":
+    main()
