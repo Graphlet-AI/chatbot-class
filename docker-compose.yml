@@ -14,7 +14,6 @@ services:
       - 8888:8888
     volumes:
       - .:/home/jovyan/work
-      - ./data:/home/jovyan/data
     environment:
       - JUPYTER_ENABLE_LAB=yes
       - DGLBACKEND=pytorch

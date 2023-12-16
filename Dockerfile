@@ -23,6 +23,7 @@ ENV PATH "/home/jovyan/.local/bin:$PATH"
 # Copy our poetry configuration files as jovyan user
 COPY --chown=${NB_UID}:${NB_GID} pyproject.toml "/home/${NB_USER}/work/"
 COPY --chown=${NB_UID}:${NB_GID} poetry.lock    "/home/${NB_USER}/work/"
+COPY --chown={${NB_UID}:${NB_GID}} chatbot_class/. "/home/${NB_USER}/work/"
 
 # Install our package requirements via poetry. No venv. Squash max-workers error.
 WORKDIR "/home/${NB_USER}/work"
