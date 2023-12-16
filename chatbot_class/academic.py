@@ -1,5 +1,6 @@
 import logging
 import os
+import subprocess
 
 from langchain.chains import ConversationalRetrievalChain
 from langchain.document_loaders import PyPDFDirectoryLoader
@@ -12,8 +13,9 @@ from langchain.vectorstores import OpenSearchVectorSearch
 logging.getLogger("langchain").setLevel(logging.DEBUG)
 
 # Dropbox folder with academic papers
-PAPER_FOLDER = "/home/rjurney/Dropbox/Academic Papers/"
-assert os.path.exists(PAPER_FOLDER)
+PAPER_FOLDER = f"{os.getcwd()}/data/Network_Motifs/"
+paper_count = len(os.listdir(PAPER_FOLDER))
+print(f"You have {paper_count:,} Network Motif PDFs in `{PAPER_FOLDER}`.")
 
 # Set in my ~/.zshrc
 openai_api_key = os.environ.get("OPENAI_API_KEY")
@@ -23,13 +25,14 @@ if not openai_api_key:
 # Load all PDFs from academic paper folder
 loader = PyPDFDirectoryLoader(PAPER_FOLDER, silent_errors=True)
 docs = loader.load()
+print(f"You have {len(docs)} document segments in `{PAPER_FOLDER}`.")
 
 # How many papers on network motifs?
 motif_docs = [doc for doc in docs if "motif" in doc.page_content]
 motif_doc_count = len(motif_docs)
 paper_count = len(set(doc.metadata["source"] for doc in motif_docs))
 print(
-    f"You have {paper_count} papers on network motifs split across {motif_doc_count} document segments in `{PAPER_FOLDER}`."
+    f"You have {paper_count} papers mentioning network motifs split across {motif_doc_count} document segments in `{PAPER_FOLDER}`."
 )
 
 # Embed them with OpenAI ada model and store them in OpenSearch
@@ -56,5 +59,7 @@ qa = ConversationalRetrievalChain.from_llm(
     verbose=True,
 )
 
-result = qa({"question": "What are the different types of network motif?"})
-print(result)
+# Ask some questions
+print(qa({"question": "What are the different types of network motif?"})["answer"])
+
+print(qa({"question": "What is an example of a biological network motif?"})["answer"])
