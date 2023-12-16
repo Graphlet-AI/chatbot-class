@@ -4201,6 +4201,17 @@ files = [
 ]
 
 [[package]]
+name = "python-magic"
+version = "0.4.27"
+description = "File type identification using libmagic"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
+files = [
+    {file = "python-magic-0.4.27.tar.gz", hash = "sha256:c1ba14b08e4a5f5c31a302b7721239695b2f0f058d125bd5ce1ee36b9d9d3c3b"},
+    {file = "python_magic-0.4.27-py2.py3-none-any.whl", hash = "sha256:c212960ad306f700aa0d01e5d7a325d20548ff97eb9920dcd29513174f0294d3"},
+]
+
+[[package]]
 name = "pytz"
 version = "2023.3.post1"
 description = "World timezone definitions, modern and historical"
@@ -4752,6 +4763,21 @@ files = [
 
 [package.dependencies]
 pyasn1 = ">=0.1.3"
+
+[[package]]
+name = "s3cmd"
+version = "2.4.0"
+description = "Command line tool for managing Amazon S3 and CloudFront services"
+optional = false
+python-versions = "*"
+files = [
+    {file = "s3cmd-2.4.0-py2.py3-none-any.whl", hash = "sha256:13ad8a44d44cc0535ba8c878c91fd68cd830dc48f6388722fa44a7aaf3f18017"},
+    {file = "s3cmd-2.4.0.tar.gz", hash = "sha256:6b567521be1c151323f2059c8feec85ded96b6f184ff80535837fea33798b40b"},
+]
+
+[package.dependencies]
+python-dateutil = "*"
+python-magic = "*"
 
 [[package]]
 name = "safetensors"
@@ -6575,4 +6601,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "a654e747a325f9435eac2a0afa31b94e3d5e4178ff7b8b5af7d2dddd6e6e03b7"
+content-hash = "cb3d8fafff37aa7efd1c3ad1553c68af9960b6ae580af8b2c2fc0b841d97da4c"
