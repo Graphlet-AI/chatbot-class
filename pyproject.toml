@@ -5,7 +5,7 @@ description = "Course covering generative AI, large language models (LLMs), vect
 authors = ["Russell Jurney <rjurney@graphlet.ai>"]
 license = "MIT"
 readme = "README.md"
-packages = [{include = "chatbot_class"}]
+packages = [{include = "chatbot_class", from = "."}]
 
 [tool.poetry.urls]
 "Company Homepage" = "https://graphlet.ai"
