@@ -4,15 +4,18 @@ from typing import List
 
 import numpy as np
 import openai
+import pandas as pd
+from IPython.display import display
 from scipy.spatial.distance import cosine
 from sentence_transformers import SentenceTransformer
 
+# Makes a warning go away
 os.environ["TOKENIZERS_PARALLELISM"] = "true"
 openai.api_key = os.environ.get("OPENAI_API_KEY")
 
 
-def compare_records_to_csv(record_pairs: List[List[str]], models):
-    """compare_records_to_csv Generate CSV cosine similarity comparisons for a list of record pairs and models
+def compare_records_to_df(record_pairs: List[List[str]], models):
+    """compare_records_to_df Generate a pd.DataFrame cosine similarity comparisons for a list of record pairs and models
 
     Parameters
     ----------
@@ -22,6 +25,7 @@ def compare_records_to_csv(record_pairs: List[List[str]], models):
         A pair of sentence transformers to compare
     """
 
+    rows = []
     for name_one, name_two in record_pairs:
         scores = []
         for model_name in models.keys():
@@ -38,10 +42,15 @@ def compare_records_to_csv(record_pairs: List[List[str]], models):
         )["data"]
 
         openai_embeddings = [d["embedding"] for d in data_obj]
-
         openai_score = 1.0 - cosine(openai_embeddings[0], openai_embeddings[1])
 
-        print(f"{name_one}\t{name_two}\t{scores[0]:,.3f}\t{scores[1]:,.3f}\t{openai_score:,.3f}")
+        rows.append([name_one, name_two, scores[0], scores[1], openai_score])
+
+    df = pd.DataFrame(
+        rows, columns=["Name One", "Name Two", "All Cosine", "Paraphrase Cosine", "OpenAI Cosine"]
+    )
+
+    return df
 
 
 models = {
@@ -145,12 +154,10 @@ json_pairs = np.array(
     ]
 )
 
-print("Name One\tName Two\tAll Cosine\tParaphrase Cosine\tOpenAI Cosine")
-compare_records_to_csv(name_pairs, models)
+display(compare_records_to_df(name_pairs, models))
 
 print()
 
-print("JSON One\tJSON Two\tAll Cosine\tParaphrase Cosine\tOpenAI Cosine")
-compare_records_to_csv(json_pairs, models)
+display(compare_records_to_df(json_pairs, models))
 
 print()
