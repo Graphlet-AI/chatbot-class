@@ -37,6 +37,7 @@ tiktoken = "^0.5.1"
 torch = "^2.1.0"
 wandb = "^0.15.11"
 jupyter = "^1.0.0"
+faiss-cpu = "^1.7.4"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.9.1"
