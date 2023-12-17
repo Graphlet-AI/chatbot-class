@@ -1,9 +1,14 @@
 import json
+import os
 from typing import List
 
 import numpy as np
+import openai
 from scipy.spatial.distance import cosine
 from sentence_transformers import SentenceTransformer
+
+os.environ["TOKENIZERS_PARALLELISM"] = "true"
+openai.api_key = os.environ.get("OPENAI_API_KEY")
 
 
 def compare_records_to_csv(record_pairs: List[List[str]], models):
@@ -28,7 +33,15 @@ def compare_records_to_csv(record_pairs: List[List[str]], models):
 
             scores.append(score)
 
-        print(f"{name_one}\t{name_two}\t{scores[0]:,.3f}\t{scores[1]:,.3f}")
+        data_obj = (
+            openai.Embedding.create(input=[name_one, name_two], model="text-embedding-ada-002")
+        )["data"]
+
+        openai_embeddings = [d["embedding"] for d in data_obj]
+
+        openai_score = 1.0 - cosine(openai_embeddings[0], openai_embeddings[1])
+
+        print(f"{name_one}\t{name_two}\t{scores[0]:,.3f}\t{scores[1]:,.3f}\t{openai_score:,.3f}")
 
 
 models = {
@@ -132,10 +145,12 @@ json_pairs = np.array(
     ]
 )
 
-print("Name One\tName Two\tAll Cosine\tParaphrase Cosine")
+print("Name One\tName Two\tAll Cosine\tParaphrase Cosine\tOpenAI Cosine")
 compare_records_to_csv(name_pairs, models)
 
 print()
 
-print("JSON One\tJSON Two\tAll Cosine\tParaphrase Cosine")
+print("JSON One\tJSON Two\tAll Cosine\tParaphrase Cosine\tOpenAI Cosine")
 compare_records_to_csv(json_pairs, models)
+
+print()
