@@ -4,5 +4,4 @@ logs
 .ipynb_checkpoints
 envs
 .DS_Store
-.env
 dist
