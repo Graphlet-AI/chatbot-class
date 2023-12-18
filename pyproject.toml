@@ -45,6 +45,7 @@ ctransformers = "^0.2.27"
 safetensors = "^0.4.1"
 pygraphviz = "^1.11"
 torch = ">=2.1.2"
+unstructured = "^0.11.5"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.9.1"
