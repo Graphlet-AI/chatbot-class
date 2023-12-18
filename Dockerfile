@@ -10,7 +10,7 @@ ENV POETRY_VIRTUALENVS_CREATE=false \
 USER root
 RUN sudo apt update && \
     sudo apt upgrade -y && \
-    sudo apt install curl -y && \
+    sudo apt install curl graphviz graphviz-dev -y && \
     rm -rf /var/lib/apt/lists/*
 
 # Go back to jovyan user so we don't have permission problems
