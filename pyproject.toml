@@ -44,6 +44,7 @@ seaborn = "^0.13.0"
 jedi = "^0.19.1"
 ctransformers = "^0.2.27"
 safetensors = "^0.4.1"
+pygraphviz = "^1.11"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.9.1"
