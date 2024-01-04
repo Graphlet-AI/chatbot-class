@@ -59,6 +59,8 @@ mypy = "^1.5.1"
 pre-commit = "^3.4.0"
 s3cmd = "^2.4.0"
 nbdime = "^4.0.1"
+pytest = "^7.4.4"
+pytest-stub = "^1.1.0"
 
 [build-system]
 requires = ["poetry-core"]
