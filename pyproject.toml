@@ -48,6 +48,8 @@ torch = ">=2.1.2"
 unstructured = "^0.11.5"
 langchain-experimental = "^0.0.47"
 duckduckgo-search = "^4.1.1"
+wikipedia = "^1.4.0"
+arxiv = "^2.1.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.9.1"
