@@ -50,6 +50,7 @@ langchain-experimental = "^0.0.47"
 duckduckgo-search = "^4.1.1"
 wikipedia = "^1.4.0"
 arxiv = "^2.1.0"
+tavily-python = "^0.3.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.9.1"
